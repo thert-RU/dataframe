@@ -1,5 +1,6 @@
 #место для твоего кода
 import pandas as pd
+import matplotlib.pyplot as plt
 df = pd.read_csv('investments_VC.csv')
 #df.info()
 
@@ -19,7 +20,7 @@ def fill_name(row):
     return row
 
 df = df.apply(fill_name, axis=1)
-#df.info()
+# df.info()
 
 
 def rounds_count(row):
@@ -45,7 +46,7 @@ def rounds_count(row):
 df['rounds_rating'] = df.apply(rounds_count, axis=1)
 #df.info()
 
-#print(df['rounds_rating'].head(50))
+# print(df['funding_total_usd'].head(50))
 
 def set_status(row):
     if pd.isnull(row['status']):
@@ -55,10 +56,20 @@ def set_status(row):
 df = df.apply(set_status, axis=1)
 
 def int_usd(row):
-    return int(row.replace(',', ''))
+    try:
+        return int(row.replace(',', ''))
+    except:
+        return 0
     
 df['funding_total_usd'] = df['funding_total_usd'].apply(int_usd)
 
+rounds_percents = []
+rounds_median = []
+
+temp = df[(df['status'] == 'operating') | (df['status'] == 'acquired')]
+
+rounds_percents.append(round(len(temp)/len(df), 2)*100)
+rounds_median.append(round(temp['funding_total_usd'].median(), 1))
 
 for i in range(9):
     temp = df[
@@ -66,5 +77,16 @@ for i in range(9):
         ((df['status'] == 'operating') |
         (df['status'] == 'acquired'))
     ]
-    print(round(len(temp)/len(df[df['rounds_rating'] == i]), 2)*100, '-', len(temp), 'startups')
-    print(temp['funding_total_usd'].mean(), 'средняя сумма инвестиций в долларах сша')
+    # print(i, 'раундов финансирования', round(len(temp)/len(df[df['rounds_rating'] == i]), 2)*100, '% -', len(temp), 'startups')
+    # print(round(temp['funding_total_usd'].median(), 1), 'средняя сумма инвестиций в долларах сша (медиана)')
+    # print(round(temp['funding_total_usd'].mean(), 1), 'средняя сумма инвестиций в долларах сша (среднее арифм)')
+    rounds_percents.append(round(len(temp)/len(df[df['rounds_rating'] == i]), 2)*100)
+    rounds_median.append(round(temp['funding_total_usd'].median(), 1))
+print(rounds_percents, rounds_median)
+
+# temp = df[(df['status'] == 'operating') |
+#         (df['status'] == 'acquired')]
+# print(round(len(temp)/len(df), 2)*100, '% -', len(temp), 'startups')
+# print(round(temp['funding_total_usd'].median(), 1), 'средняя сумма инвестиций в долларах сша (медиана)')
+# print(round(temp['funding_total_usd'].mean(), 1), 'средняя сумма инвестиций в долларах сша (среднее арифм)')
+plt.scatter()
