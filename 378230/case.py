@@ -65,13 +65,16 @@ df['funding_total_usd'] = df['funding_total_usd'].apply(int_usd)
 
 rounds_percents = []
 rounds_median = []
+rounds_amount = []
 
-temp = df[(df['status'] == 'operating') | (df['status'] == 'acquired')]
+# temp = df[(df['status'] == 'operating') | (df['status'] == 'acquired')]
 
-rounds_percents.append(round(len(temp)/len(df), 2)*100)
-rounds_median.append(round(temp['funding_total_usd'].median(), 1))
+# rounds_percents.append(round(len(temp)/len(df), 2)*100)
+# rounds_median.append(round(temp['funding_total_usd'].median(), 1))
 
-for i in range(9):
+for i in range(8): #на последнем восьмом раунде ОЧЕНЬ резкий выброс, поэтому на время он отключем :)
+    print(i)
+    rounds_amount.append(i)
     temp = df[
         (df['rounds_rating'] == i) &
         ((df['status'] == 'operating') |
@@ -89,4 +92,10 @@ print(rounds_percents, rounds_median)
 # print(round(len(temp)/len(df), 2)*100, '% -', len(temp), 'startups')
 # print(round(temp['funding_total_usd'].median(), 1), 'средняя сумма инвестиций в долларах сша (медиана)')
 # print(round(temp['funding_total_usd'].mean(), 1), 'средняя сумма инвестиций в долларах сша (среднее арифм)')
-plt.scatter()
+plt.grid()
+plt.plot(rounds_amount, rounds_percents)
+plt.show()
+plt.plot(rounds_amount, rounds_median)
+plt.show()
+plt.plot(rounds_percents, rounds_median)
+plt.show()
